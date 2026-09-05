@@ -1,0 +1,12 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html", "x": 0, "y": 0, "w": 1280, "h": 900, "title": "Collection" },
+    { "file": "Wishlist.dc.html", "x": 0, "y": 1040, "w": 1030, "h": 700, "title": "Wishlist & Read log" },
+    { "file": "BookDetail.dc.html", "x": 1400, "y": 0, "w": 760, "h": 980, "title": "Book detail" },
+    { "file": "AddBook.dc.html", "x": 2260, "y": 0, "w": 640, "h": 1150, "title": "Add a book" }
+  ],
+  "annotations": [
+    { "id": "theme-note", "x": 0, "y": -150, "w": 340, "text": "Theme chips above each screen change paper / ink / accent for that screen.\nCovers are placeholders — the real app pulls them from Open Library." }
+  ],
+  "launch": { "view": "canvas" }
+}

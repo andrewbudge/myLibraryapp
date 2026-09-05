@@ -1,0 +1,194 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&amp;family=Archivo:wght@400;500;600&amp;display=swap">
+  <style>
+    body { margin: 0; font-family: 'Archivo', system-ui, sans-serif; }
+    a { color: #C08B2D; } a:hover { color: #8A6212; }
+    .app { display: grid; grid-template-columns: 250px 1fr; min-height: 900px; }
+    .sidebar { border-right: 1px solid #DAD8CF; padding: 32px 20px; display: flex; flex-direction: column; gap: 28px; }
+    .nav-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+    .nav-item { border-radius: 5px; padding: 7px 10px; font-size: 15px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .count { font-size: 13px; color: #5A6E64; }
+    .tag-cloud { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag-chip { border: 1px solid #DAD8CF; background: #FFFFFF; border-radius: 999px; padding: 3px 10px; font-size: 13px; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .book { display: grid; grid-template-columns: 10px 86px 1fr; background: #FFFFFF; border: 1px solid #DAD8CF; border-radius: 6px; overflow: hidden; min-height: 132px; }
+    .cover { background: #EDEBE4; display: flex; align-items: center; justify-content: center; font-family: 'Fraunces', serif; font-size: 24px; color: #5A6E64; }
+    .book-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 5px; }
+    .book-title { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600; line-height: 1.25; }
+    .book-author { font-size: 14px; color: #5A6E64; }
+    .meta { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+    .pill { font-size: 11.5px; border-radius: 999px; padding: 2px 9px; border: 1px solid #DAD8CF; color: #5A6E64; }
+    .actions { display: flex; gap: 10px; margin-top: auto; padding-top: 6px; font-size: 13px; color: #5A6E64; }
+    .actions span { text-decoration: underline; text-underline-offset: 3px; }
+    .h2side { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; margin: 0 0 8px 0; display: flex; justify-content: space-between; align-items: center; }
+    .mini { border: 1px solid #DAD8CF; border-radius: 4px; color: #5A6E64; font-size: 14px; padding: 2px 6px; background: #F7F6F2; }
+  </style>
+</helmet>
+<div class="app" style="background: {{paper}}; color: {{ink}}; width: 1280px; box-sizing: border-box;">
+  <div class="sidebar">
+    <div>
+      <div style="font-family: 'Fraunces', serif; font-size: 27px; font-weight: 700; line-height: 1.1; color: {{ink}};">My Library</div>
+      <div style="font-size: 13px; color: #5A6E64; margin-top: 6px;">A record of the books you keep</div>
+    </div>
+    <div>
+      <div class="h2side">Library</div>
+      <ul class="nav-list">
+        <li class="nav-item" style="background: {{ink}}; color: #FFFFFF;">Collection <span class="count" style="color: #CFDCD5;">13</span></li>
+        <li class="nav-item">Wishlist <span class="count">3</span></li>
+        <li class="nav-item">Read log <span class="count">2</span></li>
+      </ul>
+    </div>
+    <div>
+      <div class="h2side">Shelves <span class="mini">+</span></div>
+      <ul class="nav-list">
+        <li class="nav-item">Living room <span class="count">5</span></li>
+        <li class="nav-item">Bedroom <span class="count">4</span></li>
+        <li class="nav-item">Office <span class="count">4</span></li>
+        <li class="nav-item">Need to read <span class="count">4</span></li>
+        <li class="nav-item">Did not finish <span class="count">1</span></li>
+      </ul>
+    </div>
+    <div>
+      <div class="h2side">Tags <span class="mini">✎</span></div>
+      <div class="tag-cloud">
+        <span class="tag-chip" style="background: #E4EBE7; border-color: {{ink}}; color: {{ink}};">fiction</span>
+        <span class="tag-chip" style="background: #E2E9F1; border-color: #3D5A80; color: #3D5A80;">sci-fi</span>
+        <span class="tag-chip" style="background: #EDE5EF; border-color: #6B4E71; color: #6B4E71;">fantasy</span>
+        <span class="tag-chip" style="background: #E3EDEA; border-color: #2F6B62; color: #2F6B62;">non-fiction</span>
+        <span class="tag-chip" style="background: #EFE7E0; border-color: #77522F; color: #77522F;">classics</span>
+        <span class="tag-chip" style="background: #F0E2E6; border-color: #7A3B4F; color: #7A3B4F;">psychology</span>
+        <span class="tag-chip" style="background: #F6E5E1; border-color: #A63D2F; color: #A63D2F;">memoir</span>
+        <span class="tag-chip" style="background: #F5EBD9; border-color: #8A6212; color: #8A6212;">self-help</span>
+      </div>
+    </div>
+    <div style="margin-top: auto; display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5A6E64;">
+      <span style="text-decoration: underline; text-underline-offset: 3px;">Export library</span>
+      <span style="text-decoration: underline; text-underline-offset: 3px;">Import library</span>
+    </div>
+  </div>
+  <div style="padding: 32px 36px; min-width: 0; display: flex; flex-direction: column; gap: 22px;">
+    <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px;">
+      <div>
+        <h1 style="font-family: 'Fraunces', serif; font-size: 34px; font-weight: 600; margin: 0; color: {{ink}};">Collection</h1>
+        <div style="color: #5A6E64; font-size: 15px; margin-top: 4px;">13 books</div>
+      </div>
+      <div style="background: {{ink}}; color: #FFFFFF; border-radius: 6px; padding: 10px 18px; font-size: 15px; font-weight: 500;">Add a book</div>
+    </div>
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <div style="flex: 1; border: 1px solid #DAD8CF; border-radius: 6px; padding: 9px 13px; background: #FFFFFF; color: #5A6E64; font-size: 15px;">Search title, author, or tag</div>
+      <div style="border: 1px solid #DAD8CF; border-radius: 6px; padding: 9px 10px; background: #FFFFFF; font-size: 15px;">Newest first ▾</div>
+      <div style="border: 1px solid #DAD8CF; border-radius: 6px; padding: 9px 10px; background: #FFFFFF; font-size: 15px;">Any status ▾</div>
+    </div>
+    <div class="grid">
+      <div class="book">
+        <div style="background: #3F6C51;"></div>
+        <div class="cover">H</div>
+        <div class="book-body">
+          <div class="book-title">The Hobbit</div>
+          <div class="book-author">J. R. R. Tolkien</div>
+          <div class="meta">
+            <span class="pill" style="border-color: {{ink}}; color: {{ink}};">Living room</span>
+            <span class="pill" style="background: {{ink}}; border-color: {{ink}}; color: #FFFFFF;">Read</span>
+            <span class="pill" style="background: #EDE5EF; border-color: #6B4E71; color: #6B4E71;">fantasy</span>
+            <span style="font-size: 13px; color: {{accent}}; letter-spacing: 1px;">★★★★★</span>
+          </div>
+          <div class="actions"><span>Edit</span><span>Remove</span></div>
+        </div>
+      </div>
+      <div class="book">
+        <div style="background: #3D5A80;"></div>
+        <div class="cover">D</div>
+        <div class="book-body">
+          <div class="book-title">Dune</div>
+          <div class="book-author">Frank Herbert</div>
+          <div class="meta">
+            <span class="pill" style="border-color: {{ink}}; color: {{ink}};">Living room</span>
+            <span class="pill" style="background: {{ink}}; border-color: {{ink}}; color: #FFFFFF;">Read</span>
+            <span class="pill" style="background: #E2E9F1; border-color: #3D5A80; color: #3D5A80;">sci-fi</span>
+            <span style="font-size: 13px; color: {{accent}}; letter-spacing: 1px;">★★★★★</span>
+          </div>
+          <div class="actions"><span>Edit</span><span>Remove</span></div>
+        </div>
+      </div>
+      <div class="book">
+        <div style="background: #A63D2F;"></div>
+        <div class="cover">S</div>
+        <div class="book-body">
+          <div class="book-title">Sapiens</div>
+          <div class="book-author">Yuval Noah Harari</div>
+          <div class="meta">
+            <span class="pill" style="border-color: {{ink}}; color: {{ink}};">Office</span>
+            <span class="pill" style="background: {{accent}}; border-color: {{accent}}; color: #FFFFFF;">Reading</span>
+            <span class="pill" style="background: #E3EDEA; border-color: #2F6B62; color: #2F6B62;">non-fiction</span>
+          </div>
+          <div class="actions"><span>Edit</span><span>Remove</span></div>
+        </div>
+      </div>
+      <div class="book">
+        <div style="background: #6B4E71;"></div>
+        <div class="cover">T</div>
+        <div class="book-body">
+          <div class="book-title">Thinking, Fast and Slow</div>
+          <div class="book-author">Daniel Kahneman</div>
+          <div class="meta">
+            <span class="pill" style="border-color: {{ink}}; color: {{ink}};">Office</span>
+            <span class="pill" style="background: #7A3B4F; border-color: #7A3B4F; color: #FFFFFF;">Did not finish</span>
+            <span class="pill" style="background: #F0E2E6; border-color: #7A3B4F; color: #7A3B4F;">psychology</span>
+          </div>
+          <div class="actions"><span>Edit</span><span>Remove</span></div>
+        </div>
+      </div>
+      <div class="book">
+        <div style="background: #20483A;"></div>
+        <div class="cover">B</div>
+        <div class="book-body">
+          <div class="book-title">The Body Keeps the Score</div>
+          <div class="book-author">Bessel van der Kolk</div>
+          <div class="meta">
+            <span class="pill" style="border-color: {{ink}}; color: {{ink}};">Office</span>
+            <span class="pill" style="border-color: {{ink}}; color: {{ink}};">Need to read</span>
+            <span class="pill" style="background: #FBF1EF; border-color: #A63D2F; color: #A63D2F;">⚠ trauma</span>
+            <span class="pill" style="background: #F0E2E6; border-color: #7A3B4F; color: #7A3B4F;">psychology</span>
+          </div>
+          <div class="actions"><span>Edit</span><span>Remove</span></div>
+        </div>
+      </div>
+      <div class="book">
+        <div style="background: #8C6A4F;"></div>
+        <div class="cover">P</div>
+        <div class="book-body">
+          <div class="book-title">Pride and Prejudice</div>
+          <div class="book-author">Jane Austen</div>
+          <div class="meta">
+            <span class="pill" style="border-color: {{ink}}; color: {{ink}};">Bedroom</span>
+            <span class="pill" style="border-color: {{ink}}; color: {{ink}};">Need to read</span>
+            <span class="pill" style="background: #EFE7E0; border-color: #77522F; color: #77522F;">classics</span>
+          </div>
+          <div class="actions"><span>Edit</span><span>Remove</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"paper":{"editor":"color","default":"#F7F6F2","section":"Theme"},"ink":{"editor":"color","default":"#20483A","section":"Theme","options":["#20483A","#2B3A55","#4A3728","#333333"]},"accent":{"editor":"color","default":"#C08B2D","section":"Theme","options":["#C08B2D","#A63D2F","#3D5A80","#6B4E71"]},"$preview":{"width":1280,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      paper: this.props.paper ?? '#F7F6F2',
+      ink: this.props.ink ?? '#20483A',
+      accent: this.props.accent ?? '#C08B2D'
+    };
+  }
+}
+</script>
+</body>
+</html>

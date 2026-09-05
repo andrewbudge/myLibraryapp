@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&amp;family=Archivo:wght@400;500;600&amp;display=swap">
+  <style>
+    body { margin: 0; font-family: 'Archivo', system-ui, sans-serif; }
+    a { color: #C08B2D; } a:hover { color: #8A6212; }
+    .pill { font-size: 11.5px; border-radius: 999px; padding: 2px 9px; border: 1px solid #DAD8CF; color: #5A6E64; }
+    .h3 { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; margin: 0 0 7px 0; }
+    .statusbtn { border: 1px solid #DAD8CF; background: #FFFFFF; border-radius: 999px; padding: 4px 12px; font-size: 13px; color: #5A6E64; }
+  </style>
+</helmet>
+<div style="width: 760px; height: 980px; background: rgba(32, 72, 58, 0.45); display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+  <div style="width: 620px; background: #FFFFFF; border-radius: 10px; padding: 28px; box-sizing: border-box; color: {{ink}}; display: flex; flex-direction: column; gap: 21px;">
+    <div style="display: grid; grid-template-columns: 130px 1fr; gap: 19px;">
+      <div style="background: #EDEBE4; border-radius: 4px; min-height: 180px; display: flex; align-items: center; justify-content: center; font-family: 'Fraunces', serif; font-size: 35px; color: #5A6E64;">B</div>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="font-family: 'Fraunces', serif; font-size: 24px; font-weight: 600; line-height: 1.2;">The Body Keeps the Score</div>
+        <div style="color: #5A6E64; font-size: 15px;">Bessel van der Kolk</div>
+        <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+          <span class="pill" style="border-color: {{ink}}; color: {{ink}};">Office</span>
+          <span class="pill" style="border-color: {{ink}}; color: {{ink}};">Need to read</span>
+          <span class="pill" style="background: #E3EDEA; border-color: #2F6B62; color: #2F6B62;">non-fiction</span>
+          <span class="pill" style="background: #F0E2E6; border-color: #7A3B4F; color: #7A3B4F;">psychology</span>
+        </div>
+        <div style="font-size: 24px; letter-spacing: 2px; color: {{accent}};">★★★★<span style="color: #DAD8CF;">★</span></div>
+        <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+          <span class="statusbtn">Unread</span>
+          <span class="statusbtn">Reading</span>
+          <span class="statusbtn" style="background: {{ink}}; border-color: {{ink}}; color: #FFFFFF;">Read</span>
+          <span class="statusbtn">Did not finish</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="h3">Content warnings</div>
+      <div style="background: #FBF1EF; border: 1px solid #E5C4BD; border-radius: 6px; padding: 11px 14px; font-size: 14px; color: #A63D2F;">trauma · abuse</div>
+    </div>
+    <div>
+      <div class="h3">About this book</div>
+      <p style="font-size: 14.5px; line-height: 1.55; margin: 0; max-width: 60ch;">Trauma is a fact of life. Veterans and their families deal with the painful aftermath of combat; one in five Americans has been molested; one in four grew up with alcoholics. Dr. Bessel van der Kolk, one of the world's foremost experts on trauma, has spent over three decades working with survivors — exploring how trauma reshapes both body and brain, and offering new paths to recovery.</p>
+    </div>
+    <div>
+      <div class="h3">Your notes</div>
+      <div style="border: 1px solid #DAD8CF; border-radius: 6px; padding: 10px 11px; background: {{paper}}; min-height: 72px; font-size: 14.5px; line-height: 1.5; color: #5A6E64;">Recommended by Dr. Alvarez. Read slowly, one chapter a week.</div>
+    </div>
+    <div style="display: flex; justify-content: flex-end; gap: 10px;">
+      <div style="border: 1px solid #DAD8CF; border-radius: 6px; padding: 10px 18px; font-size: 15px; font-weight: 500;">Edit book</div>
+      <div style="background: {{ink}}; color: #FFFFFF; border-radius: 6px; padding: 10px 18px; font-size: 15px; font-weight: 500;">Done</div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"paper":{"editor":"color","default":"#F7F6F2","section":"Theme"},"ink":{"editor":"color","default":"#20483A","section":"Theme"},"accent":{"editor":"color","default":"#C08B2D","section":"Theme"},"$preview":{"width":760,"height":980}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      paper: this.props.paper ?? '#F7F6F2',
+      ink: this.props.ink ?? '#20483A',
+      accent: this.props.accent ?? '#C08B2D'
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Library</title>
+<meta name="theme-color" content="#20483A">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F7F6F2;
+    --card: #FFFFFF;
+    --ink: #20483A;
+    --ink-soft: #5A6E64;
+    --rule: #DAD8CF;
+    --red: #A63D2F;
+    --ochre: #C08B2D;
+    --focus: #2E6B54;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { font-size: 16px; }
+  body {
+    font-family: 'Archivo', system-ui, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+  button { font-family: inherit; cursor: pointer; }
+  input, select, textarea { font-family: inherit; font-size: 0.95rem; }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+  /* ---------- App shell ---------- */
+  .app {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    min-height: 100vh;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  /* ---------- Sidebar ---------- */
+  .sidebar {
+    border-right: 1px solid var(--rule);
+    padding: 2rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
+  .brand {
+    font-family: 'Fraunces', serif;
+    font-size: 1.7rem;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+  .brand small {
+    display: block;
+    font-family: 'Archivo', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: var(--ink-soft);
+    margin-top: 0.35rem;
+  }
+  .nav-group h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-group h2 .mini-btn {
+    background: none;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+    line-height: 1;
+    padding: 0.15rem 0.4rem;
+  }
+  .nav-group h2 .mini-btn:hover { border-color: var(--ink); color: var(--ink); }
+  .nav-list { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+  .nav-list button {
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    border-radius: 5px;
+    padding: 0.45rem 0.6rem;
+    font-size: 0.95rem;
+    color: var(--ink);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .nav-list button:hover { background: #EDEBE4; }
+  .nav-list button.active { background: var(--ink); color: #fff; }
+  .nav-list .count {
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+  }
+  .nav-list button.active .count { color: #cfdcd5; }
+  .shelf-actions { display: none; gap: 0.2rem; }
+  .nav-list li:hover .shelf-actions, .nav-list li:focus-within .shelf-actions { display: inline-flex; }
+  .shelf-actions span {
+    font-size: 0.75rem;
+    padding: 0.1rem 0.25rem;
+    border-radius: 3px;
+  }
+  .shelf-actions span:hover { background: rgba(0,0,0,0.15); }
+  .tag-cloud { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+  .tag-chip {
+    border: 1px solid var(--rule);
+    background: var(--card);
+    border-radius: 999px;
+    padding: 0.2rem 0.65rem;
+    font-size: 0.8rem;
+    color: var(--ink);
+  }
+  .tag-chip.active { background: var(--ochre); border-color: var(--ochre); color: #fff; }
+  .sidebar-foot { margin-top: auto; display: flex; flex-direction: column; gap: 0.4rem; }
+  .sidebar-foot button {
+    background: none;
+    border: none;
+    color: var(--ink-soft);
+    font-size: 0.83rem;
+    text-align: left;
+    padding: 0.2rem 0;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .sidebar-foot button:hover { color: var(--ink); }
+
+  /* ---------- Main ---------- */
+  .main { padding: 2rem 2.25rem; min-width: 0; }
+  .main-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.4rem;
+  }
+  .main-head h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 2.1rem;
+    font-weight: 600;
+  }
+  .main-head .sub { color: var(--ink-soft); font-size: 0.92rem; margin-top: 0.25rem; }
+  .btn {
+    border: none;
+    border-radius: 6px;
+    padding: 0.6rem 1.1rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+  .btn-primary { background: var(--ink); color: #fff; }
+  .btn-primary:hover { background: #2c5b4a; }
+  .btn-quiet {
+    background: none;
+    border: 1px solid var(--rule);
+    color: var(--ink);
+  }
+  .btn-quiet:hover { border-color: var(--ink); }
+  .btn-danger { background: var(--red); color: #fff; }
+  .btn-danger:hover { background: #8c3226; }
+
+  .toolbar {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  .toolbar input[type="search"] {
+    flex: 1;
+    min-width: 200px;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 0.55rem 0.8rem;
+    background: var(--card);
+    color: var(--ink);
+  }
+  .toolbar select {
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 0.55rem 0.6rem;
+    background: var(--card);
+    color: var(--ink);
+  }
+
+  /* ---------- Book grid ---------- */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+  }
+  .book {
+    display: grid;
+    grid-template-columns: 10px 86px 1fr;
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    overflow: hidden;
+    min-height: 132px;
+  }
+  .spine { height: 100%; }
+  .cover {
+    background: #EDEBE4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cover .no-cover {
+    font-family: 'Fraunces', serif;
+    font-size: 1.5rem;
+    color: var(--ink-soft);
+  }
+  .book-body {
+    padding: 0.75rem 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    min-width: 0;
+  }
+  .book-title {
+    font-family: 'Fraunces', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+  .book .cover, .book .book-title { cursor: pointer; }
+  .book .book-title:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .book-author { font-size: 0.87rem; color: var(--ink-soft); }
+  .book-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: 0.1rem;
+  }
+  .pill {
+    font-size: 0.72rem;
+    border-radius: 999px;
+    padding: 0.12rem 0.55rem;
+    border: 1px solid var(--rule);
+    color: var(--ink-soft);
+    background: none;
+  }
+  .pill.shelf { border-color: var(--ink); color: var(--ink); }
+  .pill.status-reading { background: var(--ochre); border-color: var(--ochre); color: #fff; }
+  .pill.status-read { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .pill.status-dnf { background: #7A3B4F; border-color: #7A3B4F; color: #fff; }
+  .pill.warning { border-color: var(--red); color: var(--red); background: #FBF1EF; }
+  .rating-small { font-size: 0.8rem; color: var(--ochre); letter-spacing: 1px; }
+  .book-actions {
+    margin-top: auto;
+    display: flex;
+    gap: 0.6rem;
+    padding-top: 0.4rem;
+  }
+  .book-actions button {
+    background: none;
+    border: none;
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+    padding: 0;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .book-actions button:hover { color: var(--ink); }
+  .book-actions button.remove:hover { color: var(--red); }
+
+  /* ---------- Empty state ---------- */
+  .empty {
+    border: 1px dashed var(--rule);
+    border-radius: 8px;
+    padding: 3.5rem 2rem;
+    text-align: center;
+    color: var(--ink-soft);
+  }
+  .empty h2 {
+    font-family: 'Fraunces', serif;
+    color: var(--ink);
+    font-weight: 600;
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+  }
+  .empty .btn { margin-top: 1.2rem; }
+
+  /* ---------- Modal ---------- */
+  dialog {
+    border: none;
+    border-radius: 10px;
+    padding: 0;
+    width: min(480px, calc(100vw - 2rem));
+    background: var(--card);
+    color: var(--ink);
+  }
+  dialog::backdrop { background: rgba(32, 72, 58, 0.45); }
+  .modal-inner { padding: 1.75rem; }
+  .modal-inner h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 1.2rem;
+  }
+  .field { margin-bottom: 0.9rem; }
+  .field label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+  }
+  .field input, .field select {
+    width: 100%;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 0.55rem 0.7rem;
+    background: var(--paper);
+    color: var(--ink);
+  }
+  .field .hint { font-size: 0.78rem; color: var(--ink-soft); margin-top: 0.3rem; }
+  .isbn-row { display: flex; gap: 0.5rem; }
+  .isbn-row input { flex: 1; }
+  .shelf-checks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.9rem;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 0.6rem 0.7rem;
+    background: var(--paper);
+  }
+  .shelf-checks label {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.9rem;
+    font-weight: 400;
+    margin: 0;
+  }
+  .shelf-checks .none { font-size: 0.85rem; color: var(--ink-soft); }
+  .cover-field { display: flex; gap: 0.8rem; align-items: center; }
+  .cover-preview {
+    width: 56px;
+    height: 80px;
+    flex-shrink: 0;
+    background: #EDEBE4;
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cover-preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cover-preview .no-cover { font-family: 'Fraunces', serif; font-size: 1.3rem; color: var(--ink-soft); }
+  .cover-btns { display: flex; flex-direction: column; gap: 0.35rem; align-items: flex-start; }
+  .cover-btns .btn { padding: 0.35rem 0.7rem; font-size: 0.85rem; }
+  .tag-rows { display: flex; flex-direction: column; gap: 0.2rem; max-height: 300px; overflow-y: auto; }
+  .tag-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    padding: 0.4rem 0.2rem;
+    border-bottom: 1px solid var(--rule);
+    font-size: 0.92rem;
+  }
+  .tag-row:last-child { border-bottom: none; }
+  .tag-row .uses { color: var(--ink-soft); font-size: 0.8rem; margin-left: 0.4rem; }
+  .tag-row-actions { display: flex; gap: 0.7rem; }
+  .tag-row-actions button {
+    background: none;
+    border: none;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    padding: 0;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .tag-row-actions button:hover { color: var(--ink); }
+  .tag-row-actions button.del:hover { color: var(--red); }
+  .swatches { display: inline-flex; gap: 0.3rem; align-items: center; }
+  .swatch {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1px solid var(--rule);
+    padding: 0;
+    background: none;
+    flex-shrink: 0;
+  }
+  .swatch.current { outline: 2px solid var(--ink); outline-offset: 1px; }
+  .swatch.none-swatch { background: var(--card); position: relative; }
+  .swatch.none-swatch::after {
+    content: '';
+    position: absolute;
+    inset: 45%;
+    left: -2px; right: -2px; top: 6px; bottom: 6px;
+    border-top: 1px solid var(--ink-soft);
+    transform: rotate(-45deg);
+  }
+  .tag-row { flex-wrap: wrap; }
+  .lookup-status { font-size: 0.83rem; margin-top: 0.4rem; min-height: 1.1em; }
+  .lookup-status.ok { color: var(--focus); }
+  .lookup-status.err { color: var(--red); }
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.6rem;
+    margin-top: 1.4rem;
+  }
+  .radio-row { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .radio-row label {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.9rem;
+    font-weight: 400;
+  }
+
+  /* ---------- Detail modal ---------- */
+  #detailModal { width: min(620px, calc(100vw - 2rem)); }
+  .detail-top { display: grid; grid-template-columns: 130px 1fr; gap: 1.2rem; }
+  .detail-cover {
+    background: #EDEBE4;
+    border-radius: 4px;
+    overflow: hidden;
+    min-height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .detail-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .detail-cover .no-cover { font-family: 'Fraunces', serif; font-size: 2.2rem; color: var(--ink-soft); }
+  .detail-title { font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 600; line-height: 1.2; }
+  .detail-author { color: var(--ink-soft); margin-top: 0.25rem; }
+  .detail-meta { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.7rem; }
+  .stars { display: inline-flex; gap: 0.1rem; margin-top: 0.8rem; }
+  .stars button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: var(--rule);
+    padding: 0.1rem;
+  }
+  .stars button.lit { color: var(--ochre); }
+  .stars button:hover { color: var(--ochre); }
+  .status-row { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.7rem; }
+  .status-row button {
+    border: 1px solid var(--rule);
+    background: var(--card);
+    border-radius: 999px;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+  }
+  .status-row button:hover { border-color: var(--ink); color: var(--ink); }
+  .status-row button.current { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .detail-section { margin-top: 1.3rem; }
+  .detail-section h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.45rem;
+  }
+  .detail-desc { font-size: 0.92rem; line-height: 1.55; color: var(--ink); max-width: 60ch; }
+  .detail-desc.muted { color: var(--ink-soft); }
+  .warning-note {
+    background: #FBF1EF;
+    border: 1px solid #E5C4BD;
+    border-radius: 6px;
+    padding: 0.7rem 0.9rem;
+    font-size: 0.9rem;
+    color: var(--red);
+  }
+  #notesArea {
+    width: 100%;
+    min-height: 90px;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 0.6rem 0.7rem;
+    background: var(--paper);
+    color: var(--ink);
+    resize: vertical;
+    line-height: 1.5;
+  }
+  @media (max-width: 480px) {
+    .detail-top { grid-template-columns: 90px 1fr; }
+  }
+
+  /* ---------- Backup banner ---------- */
+  .backup-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    background: #F5EBD9;
+    border: 1px solid var(--ochre);
+    border-radius: 6px;
+    padding: 0.7rem 1rem;
+    font-size: 0.9rem;
+    margin-bottom: 1.2rem;
+  }
+  .backup-banner .btn { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
+  .backup-banner .later {
+    background: none;
+    border: none;
+    color: var(--ink-soft);
+    font-size: 0.85rem;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* ---------- Toast ---------- */
+  .toast {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ink);
+    color: #fff;
+    border-radius: 6px;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .toast.show { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) {
+    .toast { transition: none; }
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 760px) {
+    .app { grid-template-columns: 1fr; }
+    .sidebar {
+      border-right: none;
+      border-bottom: 1px solid var(--rule);
+      padding: 1.25rem;
+      gap: 1.1rem;
+    }
+    .sidebar-foot { margin-top: 0; flex-direction: row; gap: 1.2rem; }
+    .main { padding: 1.25rem; }
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">My Library<small>A record of the books you keep</small></div>
+
+    <div class="nav-group">
+      <h2>Library</h2>
+      <ul class="nav-list" id="viewNav">
+        <li><button data-view="collection" class="active">Collection <span class="count" id="countCollection">0</span></button></li>
+        <li><button data-view="wishlist">Wishlist <span class="count" id="countWishlist">0</span></button></li>
+        <li><button data-view="readlog">Read log <span class="count" id="countReadlog">0</span></button></li>
+      </ul>
+    </div>
+
+    <div class="nav-group">
+      <h2>Shelves <button class="mini-btn" id="addShelfBtn" title="New shelf" aria-label="New shelf">+</button></h2>
+      <ul class="nav-list" id="shelfNav"></ul>
+    </div>
+
+    <div class="nav-group">
+      <h2>Tags <button class="mini-btn" id="manageTagsBtn" title="Manage tags" aria-label="Manage tags">✎</button></h2>
+      <div class="tag-cloud" id="tagCloud"></div>
+    </div>
+
+    <div class="sidebar-foot">
+      <button id="exportBtn">Export library</button>
+      <button id="importBtn">Import library</button>
+      <input type="file" id="importFile" accept="application/json" hidden>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="main-head">
+      <div>
+        <h1 id="viewTitle">Collection</h1>
+        <div class="sub" id="viewSub"></div>
+      </div>
+      <button class="btn btn-primary" id="addBookBtn">Add a book</button>
+    </div>
+
+    <div class="backup-banner" id="backupBanner" hidden>
+      <span>It's been a while since your last backup — export your library so it's safe outside this browser.</span>
+      <button class="btn btn-primary" id="backupNow">Export now</button>
+      <button class="later" id="backupLater">Remind me later</button>
+    </div>
+
+    <div class="toolbar">
+      <input type="search" id="searchInput" placeholder="Search title, author, or tag" aria-label="Search books">
+      <select id="sortSelect" aria-label="Sort books">
+        <option value="added-desc">Newest first</option>
+        <option value="added-asc">Oldest first</option>
+        <option value="title">Title A–Z</option>
+        <option value="author">Author A–Z</option>
+      </select>
+      <select id="statusFilter" aria-label="Filter by read status">
+        <option value="">Any status</option>
+        <option value="unread">Unread</option>
+        <option value="reading">Reading</option>
+        <option value="read">Read</option>
+        <option value="dnf">Did not finish</option>
+      </select>
+    </div>
+
+    <div class="grid" id="bookGrid"></div>
+    <div class="empty" id="emptyState" hidden></div>
+  </main>
+</div>
+
+<!-- Add / edit book modal -->
+<dialog id="bookModal">
+  <form class="modal-inner" id="bookForm" method="dialog">
+    <h2 id="bookModalTitle">Add a book</h2>
+
+    <div class="field">
+      <label for="isbnInput">ISBN</label>
+      <div class="isbn-row">
+        <input id="isbnInput" name="isbn" inputmode="numeric" autocomplete="off" placeholder="e.g. 9780143127741">
+        <button type="button" class="btn btn-quiet" id="lookupBtn">Look up</button>
+      </div>
+      <div class="lookup-status" id="lookupStatus" role="status"></div>
+    </div>
+
+    <div class="field">
+      <label for="titleInput">Title</label>
+      <input id="titleInput" name="title" required autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="authorInput">Author</label>
+      <input id="authorInput" name="author" autocomplete="off">
+    </div>
+    <div class="field">
+      <label>Shelves</label>
+      <div class="shelf-checks" id="shelfChecks"></div>
+      <div class="hint">A book can sit on several — a physical spot ("Office") and a mental one ("Need to read").</div>
+      <div class="isbn-row" style="margin-top:0.45rem">
+        <input id="newShelfInput" autocomplete="off" placeholder="New shelf, e.g. Hallway or Did not finish">
+        <button type="button" class="btn btn-quiet" id="newShelfBtn">Create shelf</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>Cover</label>
+      <div class="cover-field">
+        <div class="cover-preview" id="coverPreview"></div>
+        <div class="cover-btns">
+          <button type="button" class="btn btn-quiet" id="uploadCoverBtn">Upload a photo</button>
+          <button type="button" class="btn btn-quiet" id="resetCoverBtn">Use ISBN cover</button>
+          <input type="file" id="coverFile" accept="image/*" hidden>
+        </div>
+      </div>
+      <div class="hint">Photograph your own copy, or let the ISBN cover stand in.</div>
+    </div>
+    <div class="field">
+      <label for="tagsInput">Tags</label>
+      <input id="tagsInput" name="tags" autocomplete="off" placeholder="fiction, sci-fi (comma separated)">
+    </div>
+    <div class="field">
+      <label for="warningsInput">Content warnings</label>
+      <input id="warningsInput" name="warnings" autocomplete="off" placeholder="e.g. violence, grief (comma separated)">
+      <div class="hint">Shown prominently on the book so you can decide before rereading or lending.</div>
+    </div>
+    <div class="field">
+      <label>Read status</label>
+      <div class="radio-row">
+        <label><input type="radio" name="status" value="unread" checked> Unread</label>
+        <label><input type="radio" name="status" value="reading"> Reading</label>
+        <label><input type="radio" name="status" value="read"> Read</label>
+        <label><input type="radio" name="status" value="dnf"> Did not finish</label>
+      </div>
+    </div>
+    <div class="field">
+      <label>Where does it go?</label>
+      <div class="radio-row">
+        <label><input type="radio" name="list" value="collection" checked> My collection</label>
+        <label><input type="radio" name="list" value="wishlist"> Wishlist</label>
+        <label><input type="radio" name="list" value="readlog"> Read log — read it, don't own it</label>
+      </div>
+    </div>
+    <input type="hidden" name="editId" id="editId">
+    <input type="hidden" name="coverUrl" id="coverUrl">
+
+    <div class="modal-actions">
+      <button type="button" class="btn btn-quiet" id="cancelBook">Cancel</button>
+      <button type="submit" class="btn btn-primary" id="saveBook">Save book</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Book detail modal -->
+<dialog id="detailModal">
+  <div class="modal-inner">
+    <div class="detail-top">
+      <div class="detail-cover" id="detailCover"></div>
+      <div>
+        <div class="detail-title" id="detailTitle"></div>
+        <div class="detail-author" id="detailAuthor"></div>
+        <div class="detail-meta" id="detailMeta"></div>
+        <div class="stars" id="detailStars" role="radiogroup" aria-label="Your rating"></div>
+        <div class="status-row" id="detailStatus" role="radiogroup" aria-label="Read status"></div>
+      </div>
+    </div>
+    <div class="detail-section" id="detailWarningsWrap" hidden>
+      <h3>Content warnings</h3>
+      <div class="warning-note" id="detailWarnings"></div>
+    </div>
+    <div class="detail-section">
+      <h3>About this book</h3>
+      <p class="detail-desc" id="detailDesc"></p>
+    </div>
+    <div class="detail-section">
+      <h3>Your notes</h3>
+      <textarea id="notesArea" placeholder="Thoughts, where you bought it, who recommended it…"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-quiet" id="detailEdit">Edit book</button>
+      <button type="button" class="btn btn-primary" id="detailClose">Done</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- Tag manager modal -->
+<dialog id="tagModal">
+  <div class="modal-inner">
+    <h2>Manage tags</h2>
+    <div class="field">
+      <div class="isbn-row">
+        <input id="newTagInput" autocomplete="off" placeholder="New tag, e.g. poetry">
+        <button type="button" class="btn btn-quiet" id="newTagBtn">Add tag</button>
+      </div>
+      <div class="hint">Renaming or deleting a tag updates every book that carries it.</div>
+    </div>
+    <div class="tag-rows" id="tagRows"></div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-primary" id="tagModalClose">Done</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- Bought it: wishlist -> collection modal -->
+<dialog id="moveModal">
+  <div class="modal-inner">
+    <h2>Bought it!</h2>
+    <p style="font-size:0.95rem; color:var(--ink-soft); margin-bottom:1rem;" id="moveText"></p>
+    <div class="field">
+      <label>Which shelves does it go on?</label>
+      <div class="shelf-checks" id="moveShelfChecks"></div>
+      <div class="isbn-row" style="margin-top:0.45rem">
+        <input id="moveNewShelfInput" autocomplete="off" placeholder="New shelf">
+        <button type="button" class="btn btn-quiet" id="moveNewShelfBtn">Create shelf</button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-quiet" id="cancelMove">Cancel</button>
+      <button type="button" class="btn btn-primary" id="confirmMove">Add to collection</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- Confirm remove modal -->
+<dialog id="confirmModal">
+  <div class="modal-inner">
+    <h2>Remove this book?</h2>
+    <p id="confirmText" style="font-size:0.95rem; color:var(--ink-soft);"></p>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-quiet" id="cancelRemove">Keep it</button>
+      <button type="button" class="btn btn-danger" id="confirmRemove">Remove</button>
+    </div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  var STORAGE_KEY = 'myLibrary.v1';
+
+  // Cloth-binding palette for tag color coding: main for text/border, tint for fill.
+  var TAG_PALETTE = [
+    { name: 'Green',  main: '#20483A', tint: '#E4EBE7' },
+    { name: 'Red',    main: '#A63D2F', tint: '#F6E5E1' },
+    { name: 'Ochre',  main: '#8A6212', tint: '#F5EBD9' },
+    { name: 'Blue',   main: '#3D5A80', tint: '#E2E9F1' },
+    { name: 'Plum',   main: '#6B4E71', tint: '#EDE5EF' },
+    { name: 'Brown',  main: '#77522F', tint: '#EFE7E0' },
+    { name: 'Teal',   main: '#2F6B62', tint: '#E3EDEA' },
+    { name: 'Rose',   main: '#7A3B4F', tint: '#F0E2E6' }
+  ];
+
+  var STATUS_LABELS = { unread: 'Unread', reading: 'Reading', read: 'Read', dnf: 'Did not finish' };
+
+  var state = {
+    books: [],
+    shelves: [],
+    tags: [],
+    tagColors: {},
+    view: 'collection',      // 'collection' | 'wishlist'
+    shelfFilter: null,
+    tagFilter: null,
+    search: '',
+    sort: 'added-desc',
+    statusFilter: '',
+    pendingRemoveId: null
+  };
+
+  // ---------- Persistence (IndexedDB, migrating from localStorage) ----------
+  var idb = null;
+  var meta = { firstRun: Date.now() };
+
+  function openDb() {
+    return new Promise(function (resolve, reject) {
+      var req = indexedDB.open('myLibraryDB', 1);
+      req.onupgradeneeded = function () { req.result.createObjectStore('kv'); };
+      req.onsuccess = function () { resolve(req.result); };
+      req.onerror = function () { reject(req.error); };
+    });
+  }
+  function idbGet(key) {
+    return new Promise(function (resolve, reject) {
+      var rq = idb.transaction('kv', 'readonly').objectStore('kv').get(key);
+      rq.onsuccess = function () { resolve(rq.result); };
+      rq.onerror = function () { reject(rq.error); };
+    });
+  }
+  function idbSet(key, val) {
+    return new Promise(function (resolve, reject) {
+      var rq = idb.transaction('kv', 'readwrite').objectStore('kv').put(val, key);
+      rq.onsuccess = function () { resolve(); };
+      rq.onerror = function () { reject(rq.error); };
+    });
+  }
+
+  function applyState(data) {
+    if (Array.isArray(data.books)) state.books = data.books;
+    if (Array.isArray(data.shelves)) state.shelves = data.shelves;
+    if (Array.isArray(data.tags)) state.tags = data.tags;
+    if (data.tagColors && typeof data.tagColors === 'object') state.tagColors = data.tagColors;
+    migrate();
+  }
+  function readLocalStorage() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) { return null; }
+  }
+  // v1 stored one shelf per book (b.shelf) with an "Unshelved" placeholder;
+  // v2 stores b.shelves as an array and drops the placeholder.
+  function migrate() {
+    state.shelves = state.shelves.filter(function (s) { return s !== 'Unshelved'; });
+    state.books.forEach(function (b) {
+      if (!Array.isArray(b.shelves)) {
+        b.shelves = (b.shelf && b.shelf !== 'Unshelved') ? [b.shelf] : [];
+        delete b.shelf;
+      }
+    });
+  }
+  function persistPayload() {
+    return { books: state.books, shelves: state.shelves, tags: state.tags, tagColors: state.tagColors };
+  }
+  function save() {
+    if (idb) {
+      idbSet('state', persistPayload()).catch(function () {
+        toast('Could not save — storage unavailable');
+      });
+    } else {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(persistPayload()));
+      } catch (e) {
+        toast('Could not save — storage unavailable');
+      }
+    }
+  }
+  function saveMeta() {
+    if (idb) idbSet('meta', meta).catch(function () {});
+  }
+
+  // ---------- Helpers ----------
+  function $(id) { return document.getElementById(id); }
+  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function toast(msg) {
+    var t = $('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(function () { t.classList.remove('show'); }, 2400);
+  }
+  // Cloth-binding spine color hashed from title
+  var SPINE_COLORS = ['#20483A', '#A63D2F', '#C08B2D', '#3D5A80', '#6B4E71', '#8C6A4F', '#3F6C51', '#7A3B4F'];
+  function spineColor(title) {
+    var h = 0;
+    for (var i = 0; i < title.length; i++) h = (h * 31 + title.charCodeAt(i)) >>> 0;
+    return SPINE_COLORS[h % SPINE_COLORS.length];
+  }
+  function cleanIsbn(s) { return String(s || '').replace(/[^0-9Xx]/g, ''); }
+
+  // ---------- Filtering ----------
+  function visibleBooks() {
+    var q = state.search.trim().toLowerCase();
+    var list = state.books.filter(function (b) {
+      if ((b.list || 'collection') !== state.view) return false;
+      if (state.shelfFilter && (b.shelves || []).indexOf(state.shelfFilter) === -1) return false;
+      if (state.tagFilter && (b.tags || []).indexOf(state.tagFilter) === -1) return false;
+      if (state.statusFilter && b.status !== state.statusFilter) return false;
+      if (q) {
+        var hay = (b.title + ' ' + (b.author || '') + ' ' + (b.tags || []).join(' ')).toLowerCase();
+        if (hay.indexOf(q) === -1) return false;
+      }
+      return true;
+    });
+    list.sort(function (a, b) {
+      switch (state.sort) {
+        case 'title': return a.title.localeCompare(b.title);
+        case 'author': return (a.author || '').localeCompare(b.author || '');
+        case 'added-asc': return a.added - b.added;
+        default: return b.added - a.added;
+      }
+    });
+    return list;
+  }
+
+  // ---------- Rendering ----------
+  function render() {
+    renderNav();
+    renderShelves();
+    renderTags();
+    renderGrid();
+  }
+
+  function renderNav() {
+    var buttons = $('viewNav').querySelectorAll('button');
+    buttons.forEach(function (btn) {
+      btn.classList.toggle('active', btn.dataset.view === state.view && !state.shelfFilter);
+    });
+    var col = 0, wish = 0, log = 0;
+    state.books.forEach(function (b) {
+      var l = b.list || 'collection';
+      if (l === 'wishlist') wish++;
+      else if (l === 'readlog') log++;
+      else col++;
+    });
+    $('countCollection').textContent = col;
+    $('countWishlist').textContent = wish;
+    $('countReadlog').textContent = log;
+
+    var title = { collection: 'Collection', wishlist: 'Wishlist', readlog: 'Read log' }[state.view] || 'Collection';
+    if (state.shelfFilter) title = state.shelfFilter;
+    $('viewTitle').textContent = title;
+
+    var n = visibleBooks().length;
+    var parts = [n + (n === 1 ? ' book' : ' books')];
+    if (state.tagFilter) parts.push('tagged “' + state.tagFilter + '”');
+    $('viewSub').textContent = parts.join(', ');
+  }
+
+  function renderShelves() {
+    var ul = $('shelfNav');
+    ul.innerHTML = '';
+    if (!state.shelves.length) {
+      var li0 = document.createElement('li');
+      li0.style.fontSize = '0.8rem';
+      li0.style.color = 'var(--ink-soft)';
+      li0.style.padding = '0.2rem 0.6rem';
+      li0.textContent = 'No shelves yet — press + to make one.';
+      ul.appendChild(li0);
+      return;
+    }
+    state.shelves.forEach(function (shelf) {
+      var count = state.books.filter(function (b) {
+        return (b.shelves || []).indexOf(shelf) !== -1 && (b.list || 'collection') === 'collection';
+      }).length;
+      var li = document.createElement('li');
+      var btn = document.createElement('button');
+      btn.classList.toggle('active', state.shelfFilter === shelf);
+      var label = document.createElement('span');
+      label.textContent = shelf;
+      var right = document.createElement('span');
+      right.style.display = 'inline-flex';
+      right.style.alignItems = 'center';
+      right.style.gap = '0.35rem';
+      var actions = document.createElement('span');
+      actions.className = 'shelf-actions';
+      var ren = document.createElement('span');
+      ren.textContent = 'rename';
+      ren.title = 'Rename shelf';
+      ren.setAttribute('role', 'button');
+      ren.tabIndex = 0;
+      ren.addEventListener('click', function (e) { e.stopPropagation(); renameShelf(shelf); });
+      var del = document.createElement('span');
+      del.textContent = 'delete';
+      del.title = 'Delete shelf';
+      del.setAttribute('role', 'button');
+      del.tabIndex = 0;
+      del.addEventListener('click', function (e) { e.stopPropagation(); deleteShelf(shelf); });
+      actions.appendChild(ren);
+      actions.appendChild(del);
+      var cnt = document.createElement('span');
+      cnt.className = 'count';
+      cnt.textContent = count;
+      right.appendChild(actions);
+      right.appendChild(cnt);
+      btn.appendChild(label);
+      btn.appendChild(right);
+      btn.addEventListener('click', function () {
+        state.view = 'collection';
+        state.shelfFilter = state.shelfFilter === shelf ? null : shelf;
+        render();
+      });
+      li.appendChild(btn);
+      ul.appendChild(li);
+    });
+  }
+
+  function allTags() {
+    var set = {};
+    state.tags.forEach(function (t) { set[t] = true; });
+    state.books.forEach(function (b) {
+      (b.tags || []).forEach(function (t) { set[t] = true; });
+    });
+    return Object.keys(set).sort();
+  }
+  function tagUses(tag) {
+    return state.books.filter(function (b) { return (b.tags || []).indexOf(tag) !== -1; }).length;
+  }
+  function tagColor(tag) {
+    var i = state.tagColors[tag];
+    return (typeof i === 'number' && TAG_PALETTE[i]) ? TAG_PALETTE[i] : null;
+  }
+  function tagPillHtml(tag) {
+    var c = tagColor(tag);
+    var style = c ? ' style="background:' + c.tint + ';border-color:' + c.main + ';color:' + c.main + '"' : '';
+    return '<span class="pill"' + style + '>' + esc(tag) + '</span>';
+  }
+
+  function renderTags() {
+    var cloud = $('tagCloud');
+    cloud.innerHTML = '';
+    var tags = allTags();
+    if (!tags.length) {
+      var none = document.createElement('span');
+      none.style.fontSize = '0.8rem';
+      none.style.color = 'var(--ink-soft)';
+      none.textContent = 'Tag books to see them here.';
+      cloud.appendChild(none);
+      return;
+    }
+    tags.forEach(function (tag) {
+      var chip = document.createElement('button');
+      var active = state.tagFilter === tag;
+      chip.className = 'tag-chip' + (active ? ' active' : '');
+      chip.textContent = tag;
+      var c = tagColor(tag);
+      if (c) {
+        if (active) {
+          chip.style.background = c.main;
+          chip.style.borderColor = c.main;
+          chip.style.color = '#fff';
+        } else {
+          chip.style.background = c.tint;
+          chip.style.borderColor = c.main;
+          chip.style.color = c.main;
+        }
+      }
+      chip.addEventListener('click', function () {
+        state.tagFilter = state.tagFilter === tag ? null : tag;
+        render();
+      });
+      cloud.appendChild(chip);
+    });
+  }
+
+  function renderGrid() {
+    var grid = $('bookGrid');
+    var empty = $('emptyState');
+    var books = visibleBooks();
+    grid.innerHTML = '';
+
+    if (!books.length) {
+      empty.hidden = false;
+      var anyBooks = state.books.length > 0;
+      empty.innerHTML = anyBooks
+        ? '<h2>Nothing here</h2><p>No books match this view or search.</p>'
+        : '<h2>Your shelves are waiting</h2><p>Add the first book from your physical library to start the record.</p>' +
+          '<button class="btn btn-primary" id="emptyAdd">Add a book</button>';
+      var btn = $('emptyAdd');
+      if (btn) btn.addEventListener('click', function () { openBookModal(null); });
+      return;
+    }
+    empty.hidden = true;
+
+    books.forEach(function (b) {
+      var card = document.createElement('article');
+      card.className = 'book';
+
+      var coverHtml = b.coverUrl
+        ? '<img src="' + esc(b.coverUrl) + '" alt="" loading="lazy" onerror="this.parentNode.innerHTML=\'<span class=&quot;no-cover&quot;>' + esc((b.title || '?').charAt(0)) + '</span>\'">'
+        : '<span class="no-cover">' + esc((b.title || '?').charAt(0)) + '</span>';
+
+      var pills = [];
+      if ((b.list || 'collection') === 'collection') {
+        (b.shelves || []).forEach(function (s) {
+          pills.push('<span class="pill shelf">' + esc(s) + '</span>');
+        });
+      }
+      if (b.status && b.status !== 'unread') {
+        pills.push('<span class="pill status-' + b.status + '">' + (STATUS_LABELS[b.status] || b.status) + '</span>');
+      }
+      (b.warnings || []).forEach(function (w) { pills.push('<span class="pill warning">⚠ ' + esc(w) + '</span>'); });
+      (b.tags || []).forEach(function (t) { pills.push(tagPillHtml(t)); });
+      if (b.rating) {
+        pills.push('<span class="rating-small" aria-label="Rated ' + b.rating + ' of 5">' +
+          '★'.repeat(b.rating) + '☆'.repeat(5 - b.rating) + '</span>');
+      }
+
+      var moveLabel = '';
+      if ((b.list || 'collection') === 'wishlist') moveLabel = 'Move to collection';
+      if ((b.list || 'collection') === 'readlog') moveLabel = 'Add to collection';
+
+      card.innerHTML =
+        '<div class="spine" style="background:' + spineColor(b.title || '') + '"></div>' +
+        '<div class="cover">' + coverHtml + '</div>' +
+        '<div class="book-body">' +
+          '<div class="book-title">' + esc(b.title) + '</div>' +
+          '<div class="book-author">' + esc(b.author || 'Author unknown') + '</div>' +
+          '<div class="book-meta">' + pills.join('') + '</div>' +
+          '<div class="book-actions">' +
+            (moveLabel ? '<button class="move">' + moveLabel + '</button>' : '') +
+            '<button class="edit">Edit</button>' +
+            '<button class="remove">Remove</button>' +
+          '</div>' +
+        '</div>';
+
+      var mv = card.querySelector('.move');
+      if (mv) mv.addEventListener('click', function () { openMoveModal(b); });
+      card.querySelector('.edit').addEventListener('click', function () { openBookModal(b); });
+      card.querySelector('.remove').addEventListener('click', function () { openConfirm(b); });
+      card.querySelector('.cover').addEventListener('click', function () { openDetail(b); });
+      card.querySelector('.book-title').addEventListener('click', function () { openDetail(b); });
+
+      grid.appendChild(card);
+    });
+  }
+
+  // ---------- Shelves CRUD ----------
+  function addShelf() {
+    var name = prompt('Name the new shelf (e.g. Living room, Office):');
+    if (!name) return;
+    name = name.trim();
+    if (!name) return;
+    if (state.shelves.indexOf(name) !== -1) { toast('That shelf already exists'); return; }
+    state.shelves.push(name);
+    save(); render();
+  }
+  function renameShelf(oldName) {
+    var name = prompt('Rename shelf:', oldName);
+    if (!name) return;
+    name = name.trim();
+    if (!name || name === oldName) return;
+    if (state.shelves.indexOf(name) !== -1) { toast('That shelf already exists'); return; }
+    state.shelves[state.shelves.indexOf(oldName)] = name;
+    state.books.forEach(function (b) {
+      var i = (b.shelves || []).indexOf(oldName);
+      if (i !== -1) b.shelves[i] = name;
+    });
+    if (state.shelfFilter === oldName) state.shelfFilter = name;
+    save(); render();
+  }
+  function deleteShelf(name) {
+    var onIt = state.books.filter(function (b) { return (b.shelves || []).indexOf(name) !== -1; }).length;
+    var msg = onIt
+      ? 'Delete “' + name + '”? It will be removed from ' + onIt + ' book(s) — the books themselves stay.'
+      : 'Delete “' + name + '”?';
+    if (!confirm(msg)) return;
+    state.shelves = state.shelves.filter(function (s) { return s !== name; });
+    state.books.forEach(function (b) {
+      b.shelves = (b.shelves || []).filter(function (s) { return s !== name; });
+    });
+    if (state.shelfFilter === name) state.shelfFilter = null;
+    save(); render();
+  }
+
+  // ---------- Book modal ----------
+  function fillShelfChecks(selected) {
+    var wrap = $('shelfChecks');
+    wrap.innerHTML = '';
+    if (!state.shelves.length) {
+      var none = document.createElement('span');
+      none.className = 'none';
+      none.textContent = 'No shelves yet — create one below.';
+      wrap.appendChild(none);
+      return;
+    }
+    state.shelves.forEach(function (s) {
+      var label = document.createElement('label');
+      var cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.value = s;
+      cb.checked = (selected || []).indexOf(s) !== -1;
+      label.appendChild(cb);
+      label.appendChild(document.createTextNode(s));
+      wrap.appendChild(label);
+    });
+  }
+  function checkedShelves() {
+    return Array.prototype.map.call(
+      $('shelfChecks').querySelectorAll('input:checked'),
+      function (cb) { return cb.value; }
+    );
+  }
+  function updateCoverPreview() {
+    var url = $('coverUrl').value;
+    var pv = $('coverPreview');
+    var initial = ($('titleInput').value || '?').charAt(0);
+    pv.innerHTML = url
+      ? '<img src="' + esc(url) + '" alt="" onerror="this.parentNode.innerHTML=\'<span class=&quot;no-cover&quot;>' + esc(initial) + '</span>\'">'
+      : '<span class="no-cover">' + esc(initial) + '</span>';
+  }
+  // Downscale uploaded photos so localStorage stays small.
+  function fileToCover(file, cb) {
+    var img = new Image();
+    img.onload = function () {
+      var scale = Math.min(1, 400 / img.width, 600 / img.height);
+      var c = document.createElement('canvas');
+      c.width = Math.round(img.width * scale);
+      c.height = Math.round(img.height * scale);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(img.src);
+      cb(c.toDataURL('image/jpeg', 0.8));
+    };
+    img.onerror = function () {
+      URL.revokeObjectURL(img.src);
+      toast('That file could not be read as an image');
+    };
+    img.src = URL.createObjectURL(file);
+  }
+
+  function openBookModal(book) {
+    var form = $('bookForm');
+    form.reset();
+    $('lookupStatus').textContent = '';
+    $('lookupStatus').className = 'lookup-status';
+    $('bookModalTitle').textContent = book ? 'Edit book' : 'Add a book';
+    $('saveBook').textContent = book ? 'Save changes' : 'Save book';
+    fillShelfChecks(book ? book.shelves : []);
+    $('newShelfInput').value = '';
+    if (book) {
+      $('editId').value = book.id;
+      $('isbnInput').value = book.isbn || '';
+      $('titleInput').value = book.title || '';
+      $('authorInput').value = book.author || '';
+      $('tagsInput').value = (book.tags || []).join(', ');
+      $('warningsInput').value = (book.warnings || []).join(', ');
+      $('coverUrl').value = book.coverUrl || '';
+      form.querySelector('input[name="status"][value="' + (book.status || 'unread') + '"]').checked = true;
+      form.querySelector('input[name="list"][value="' + (book.list || 'collection') + '"]').checked = true;
+    } else {
+      $('editId').value = '';
+      $('coverUrl').value = '';
+      form.querySelector('input[name="list"][value="' + (state.view === 'wishlist' ? 'wishlist' : 'collection') + '"]').checked = true;
+    }
+    updateCoverPreview();
+    $('bookModal').showModal();
+    (book ? $('titleInput') : $('isbnInput')).focus();
+  }
+
+  function saveBookFromForm() {
+    var form = $('bookForm');
+    var title = $('titleInput').value.trim();
+    if (!title) return;
+    var tags = $('tagsInput').value.split(',')
+      .map(function (t) { return t.trim().toLowerCase(); })
+      .filter(function (t, i, arr) { return t && arr.indexOf(t) === i; });
+    var warnings = $('warningsInput').value.split(',')
+      .map(function (w) { return w.trim().toLowerCase(); })
+      .filter(function (w, i, arr) { return w && arr.indexOf(w) === i; });
+    var data = {
+      isbn: cleanIsbn($('isbnInput').value),
+      title: title,
+      author: $('authorInput').value.trim(),
+      shelves: checkedShelves(),
+      tags: tags,
+      warnings: warnings,
+      status: form.querySelector('input[name="status"]:checked').value,
+      list: form.querySelector('input[name="list"]:checked').value,
+      coverUrl: $('coverUrl').value
+    };
+    // No cover chosen? Fall back to the ISBN cover endpoint.
+    if (!data.coverUrl && data.isbn) {
+      data.coverUrl = 'https://covers.openlibrary.org/b/isbn/' + data.isbn + '-M.jpg?default=false';
+    }
+    var editId = $('editId').value;
+    if (editId) {
+      var existing = state.books.find(function (b) { return b.id === editId; });
+      if (existing) Object.assign(existing, data);
+      toast('“' + title + '” updated');
+    } else {
+      data.id = uid();
+      data.added = Date.now();
+      state.books.push(data);
+      toast('“' + title + '” added to ' + (data.list === 'wishlist' ? 'your wishlist' : 'your collection'));
+    }
+    save(); render();
+  }
+
+  // ---------- ISBN lookup (Open Library) ----------
+  function lookupIsbn() {
+    var isbn = cleanIsbn($('isbnInput').value);
+    var status = $('lookupStatus');
+    if (isbn.length !== 10 && isbn.length !== 13) {
+      status.textContent = 'Enter a 10 or 13 digit ISBN.';
+      status.className = 'lookup-status err';
+      return;
+    }
+    status.textContent = 'Looking up…';
+    status.className = 'lookup-status';
+    $('lookupBtn').disabled = true;
+
+    fetch('https://openlibrary.org/isbn/' + isbn + '.json')
+      .then(function (res) {
+        if (!res.ok) throw new Error('not found');
+        return res.json();
+      })
+      .then(function (data) {
+        $('titleInput').value = data.title || '';
+        $('coverUrl').value = 'https://covers.openlibrary.org/b/isbn/' + isbn + '-M.jpg?default=false';
+        updateCoverPreview();
+        var authorKey = data.authors && data.authors[0] && data.authors[0].key;
+        if (authorKey) {
+          return fetch('https://openlibrary.org' + authorKey + '.json')
+            .then(function (r) { return r.ok ? r.json() : null; })
+            .then(function (a) { if (a && a.name) $('authorInput').value = a.name; })
+            .catch(function () { /* author fetch failed; title is enough */ });
+        }
+      })
+      .then(function () {
+        if ($('titleInput').value) {
+          status.textContent = 'Found it — check the details, then save.';
+          status.className = 'lookup-status ok';
+        } else {
+          status.textContent = 'No record for that ISBN. Enter the details by hand.';
+          status.className = 'lookup-status err';
+        }
+      })
+      .catch(function () {
+        status.textContent = 'No record for that ISBN. Enter the details by hand.';
+        status.className = 'lookup-status err';
+      })
+      .finally(function () {
+        $('lookupBtn').disabled = false;
+      });
+  }
+
+  // ---------- Tag manager ----------
+  function renderTagRows() {
+    var wrap = $('tagRows');
+    wrap.innerHTML = '';
+    var tags = allTags();
+    if (!tags.length) {
+      wrap.innerHTML = '<div style="font-size:0.88rem;color:var(--ink-soft);padding:0.4rem 0">No tags yet. Add one above, or tag a book.</div>';
+      return;
+    }
+    tags.forEach(function (tag) {
+      var row = document.createElement('div');
+      row.className = 'tag-row';
+      var uses = tagUses(tag);
+      var left = document.createElement('span');
+      left.textContent = tag;
+      var usesEl = document.createElement('span');
+      usesEl.className = 'uses';
+      usesEl.textContent = uses + (uses === 1 ? ' book' : ' books');
+      left.appendChild(usesEl);
+      var swatches = document.createElement('span');
+      swatches.className = 'swatches';
+      var current = state.tagColors[tag];
+      var noneSw = document.createElement('button');
+      noneSw.type = 'button';
+      noneSw.className = 'swatch none-swatch' + (typeof current !== 'number' ? ' current' : '');
+      noneSw.title = 'No color';
+      noneSw.setAttribute('aria-label', 'No color for ' + tag);
+      noneSw.addEventListener('click', function () {
+        delete state.tagColors[tag];
+        save(); render(); renderTagRows();
+      });
+      swatches.appendChild(noneSw);
+      TAG_PALETTE.forEach(function (c, i) {
+        var sw = document.createElement('button');
+        sw.type = 'button';
+        sw.className = 'swatch' + (current === i ? ' current' : '');
+        sw.style.background = c.main;
+        sw.title = c.name;
+        sw.setAttribute('aria-label', c.name + ' for ' + tag);
+        sw.addEventListener('click', function () {
+          state.tagColors[tag] = i;
+          save(); render(); renderTagRows();
+        });
+        swatches.appendChild(sw);
+      });
+      var actions = document.createElement('span');
+      actions.className = 'tag-row-actions';
+      var ren = document.createElement('button');
+      ren.type = 'button';
+      ren.textContent = 'Rename';
+      ren.addEventListener('click', function () { renameTag(tag); });
+      var del = document.createElement('button');
+      del.type = 'button';
+      del.className = 'del';
+      del.textContent = 'Delete';
+      del.addEventListener('click', function () { deleteTag(tag); });
+      actions.appendChild(ren);
+      actions.appendChild(del);
+      row.appendChild(left);
+      row.appendChild(swatches);
+      row.appendChild(actions);
+      wrap.appendChild(row);
+    });
+  }
+  function addTag() {
+    var name = $('newTagInput').value.trim().toLowerCase();
+    if (!name) return;
+    if (allTags().indexOf(name) !== -1) { toast('That tag already exists'); return; }
+    state.tags.push(name);
+    $('newTagInput').value = '';
+    save(); render(); renderTagRows();
+  }
+  function renameTag(oldName) {
+    var name = prompt('Rename tag:', oldName);
+    if (!name) return;
+    name = name.trim().toLowerCase();
+    if (!name || name === oldName) return;
+    if (allTags().indexOf(name) !== -1) { toast('That tag already exists'); return; }
+    state.tags = state.tags.map(function (t) { return t === oldName ? name : t; });
+    if (typeof state.tagColors[oldName] === 'number') {
+      state.tagColors[name] = state.tagColors[oldName];
+      delete state.tagColors[oldName];
+    }
+    state.books.forEach(function (b) {
+      var i = (b.tags || []).indexOf(oldName);
+      if (i !== -1) b.tags[i] = name;
+    });
+    if (state.tagFilter === oldName) state.tagFilter = name;
+    save(); render(); renderTagRows();
+  }
+  function deleteTag(name) {
+    var uses = tagUses(name);
+    var msg = uses
+      ? 'Delete tag “' + name + '”? It will be removed from ' + uses + ' book(s).'
+      : 'Delete tag “' + name + '”?';
+    if (!confirm(msg)) return;
+    state.tags = state.tags.filter(function (t) { return t !== name; });
+    delete state.tagColors[name];
+    state.books.forEach(function (b) {
+      b.tags = (b.tags || []).filter(function (t) { return t !== name; });
+    });
+    if (state.tagFilter === name) state.tagFilter = null;
+    save(); render(); renderTagRows();
+  }
+
+  // ---------- Bought it: wishlist -> collection ----------
+  var moveBook = null;
+  function fillMoveShelfChecks(selected) {
+    var wrap = $('moveShelfChecks');
+    wrap.innerHTML = '';
+    if (!state.shelves.length) {
+      var none = document.createElement('span');
+      none.className = 'none';
+      none.textContent = 'No shelves yet — create one below, or skip.';
+      wrap.appendChild(none);
+      return;
+    }
+    state.shelves.forEach(function (s) {
+      var label = document.createElement('label');
+      var cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.value = s;
+      cb.checked = (selected || []).indexOf(s) !== -1;
+      label.appendChild(cb);
+      label.appendChild(document.createTextNode(s));
+      wrap.appendChild(label);
+    });
+  }
+  function openMoveModal(book) {
+    moveBook = book;
+    $('moveText').textContent = (book.list === 'readlog')
+      ? '“' + book.title + '” is joining your collection — you own a copy now. Pick where it lives.'
+      : '“' + book.title + '” is coming off the wishlist. Pick where it lives now — physical spot, mental shelf, or both.';
+    fillMoveShelfChecks(book.shelves || []);
+    $('moveNewShelfInput').value = '';
+    $('moveModal').showModal();
+  }
+
+  // ---------- Book detail ----------
+  var detailBook = null;
+
+  function renderDetailStars() {
+    var wrap = $('detailStars');
+    wrap.innerHTML = '';
+    var rating = (detailBook && detailBook.rating) || 0;
+    for (var i = 1; i <= 5; i++) {
+      (function (n) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = '★';
+        btn.className = n <= rating ? 'lit' : '';
+        btn.title = n + ' of 5';
+        btn.setAttribute('aria-label', 'Rate ' + n + ' of 5');
+        btn.addEventListener('click', function () {
+          detailBook.rating = detailBook.rating === n ? 0 : n;
+          save();
+          renderDetailStars();
+          renderGrid();
+        });
+        wrap.appendChild(btn);
+      })(i);
+    }
+  }
+
+  function renderDetailStatus() {
+    var wrap = $('detailStatus');
+    wrap.innerHTML = '';
+    Object.keys(STATUS_LABELS).forEach(function (s) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = STATUS_LABELS[s];
+      var current = (detailBook.status || 'unread') === s;
+      btn.className = current ? 'current' : '';
+      btn.setAttribute('aria-pressed', current ? 'true' : 'false');
+      btn.addEventListener('click', function () {
+        detailBook.status = s;
+        save();
+        renderDetailStatus();
+        renderGrid();
+      });
+      wrap.appendChild(btn);
+    });
+  }
+
+  function setDetailDesc(text, muted) {
+    var el = $('detailDesc');
+    el.textContent = text;
+    el.className = 'detail-desc' + (muted ? ' muted' : '');
+  }
+
+  function fetchDescription(book) {
+    setDetailDesc('Fetching description…', true);
+    fetch('https://openlibrary.org/isbn/' + book.isbn + '.json')
+      .then(function (res) {
+        if (!res.ok) throw new Error('no edition');
+        return res.json();
+      })
+      .then(function (ed) {
+        var workKey = ed.works && ed.works[0] && ed.works[0].key;
+        if (!workKey) throw new Error('no work');
+        return fetch('https://openlibrary.org' + workKey + '.json');
+      })
+      .then(function (res) {
+        if (!res.ok) throw new Error('no work');
+        return res.json();
+      })
+      .then(function (work) {
+        var d = work.description;
+        if (d && typeof d === 'object') d = d.value;
+        if (!d) throw new Error('no description');
+        book.description = d;
+        save();
+        if (detailBook === book) setDetailDesc(d, false);
+      })
+      .catch(function () {
+        if (detailBook === book) setDetailDesc('No description found online for this book.', true);
+      });
+  }
+
+  function openDetail(book) {
+    detailBook = book;
+
+    var cover = $('detailCover');
+    cover.innerHTML = book.coverUrl
+      ? '<img src="' + esc(book.coverUrl) + '" alt="" onerror="this.parentNode.innerHTML=\'<span class=&quot;no-cover&quot;>' + esc((book.title || '?').charAt(0)) + '</span>\'">'
+      : '<span class="no-cover">' + esc((book.title || '?').charAt(0)) + '</span>';
+
+    $('detailTitle').textContent = book.title;
+    $('detailAuthor').textContent = book.author || 'Author unknown';
+
+    var meta = $('detailMeta');
+    var pills = [];
+    var list = book.list || 'collection';
+    if (list === 'wishlist') pills.push('<span class="pill shelf">Wishlist</span>');
+    else if (list === 'readlog') pills.push('<span class="pill shelf">Read log — not owned</span>');
+    else (book.shelves || []).forEach(function (s) { pills.push('<span class="pill shelf">' + esc(s) + '</span>'); });
+    (book.tags || []).forEach(function (t) { pills.push(tagPillHtml(t)); });
+    meta.innerHTML = pills.join('');
+    renderDetailStatus();
+
+    var hasWarnings = (book.warnings || []).length > 0;
+    $('detailWarningsWrap').hidden = !hasWarnings;
+    if (hasWarnings) $('detailWarnings').textContent = book.warnings.join(' · ');
+
+    renderDetailStars();
+    $('notesArea').value = book.notes || '';
+
+    if (book.description) setDetailDesc(book.description, false);
+    else if (book.isbn) fetchDescription(book);
+    else setDetailDesc('No ISBN on record, so a description can\'t be looked up. Add one via Edit book.', true);
+
+    $('detailModal').showModal();
+  }
+
+  function saveDetailNotes() {
+    if (!detailBook) return;
+    var val = $('notesArea').value.trim();
+    if ((detailBook.notes || '') !== val) {
+      detailBook.notes = val;
+      save();
+    }
+  }
+
+  // ---------- Remove confirm ----------
+  function openConfirm(book) {
+    state.pendingRemoveId = book.id;
+    $('confirmText').textContent = '“' + book.title + '” will be removed from your ' +
+      ((book.list || 'collection') === 'wishlist' ? 'wishlist' : 'collection') + '.';
+    $('confirmModal').showModal();
+  }
+
+  // ---------- Export / import ----------
+  function exportLibrary() {
+    var blob = new Blob(
+      [JSON.stringify({ books: state.books, shelves: state.shelves, tags: state.tags, tagColors: state.tagColors }, null, 2)],
+      { type: 'application/json' }
+    );
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'my-library-' + new Date().toISOString().slice(0, 10) + '.json';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    meta.lastExport = Date.now();
+    saveMeta();
+    $('backupBanner').hidden = true;
+  }
+  function importLibrary(file) {
+    var reader = new FileReader();
+    reader.onload = function () {
+      try {
+        var data = JSON.parse(reader.result);
+        if (!Array.isArray(data.books)) throw new Error('bad format');
+        if (!confirm('Replace your current library with this file? (' + data.books.length + ' books)')) return;
+        state.books = data.books;
+        state.shelves = Array.isArray(data.shelves) ? data.shelves : [];
+        state.tags = Array.isArray(data.tags) ? data.tags : [];
+        state.tagColors = (data.tagColors && typeof data.tagColors === 'object') ? data.tagColors : {};
+        migrate();
+        state.shelfFilter = null;
+        state.tagFilter = null;
+        save(); render();
+        toast('Library imported');
+      } catch (e) {
+        toast('That file is not a library export');
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  // ---------- Wire up ----------
+  $('viewNav').querySelectorAll('button').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      state.view = btn.dataset.view;
+      state.shelfFilter = null;
+      render();
+    });
+  });
+  $('addShelfBtn').addEventListener('click', addShelf);
+  $('addBookBtn').addEventListener('click', function () { openBookModal(null); });
+  $('searchInput').addEventListener('input', function (e) {
+    state.search = e.target.value;
+    render();
+  });
+  $('sortSelect').addEventListener('change', function (e) {
+    state.sort = e.target.value;
+    render();
+  });
+  $('statusFilter').addEventListener('change', function (e) {
+    state.statusFilter = e.target.value;
+    render();
+  });
+  $('lookupBtn').addEventListener('click', lookupIsbn);
+  $('isbnInput').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { e.preventDefault(); lookupIsbn(); }
+  });
+  $('bookForm').addEventListener('submit', function (e) {
+    if (!$('titleInput').value.trim()) return;
+    saveBookFromForm();
+  });
+  $('manageTagsBtn').addEventListener('click', function () {
+    renderTagRows();
+    $('newTagInput').value = '';
+    $('tagModal').showModal();
+  });
+  $('newTagBtn').addEventListener('click', addTag);
+  $('newTagInput').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { e.preventDefault(); addTag(); }
+  });
+  $('tagModalClose').addEventListener('click', function () { $('tagModal').close(); });
+  $('moveNewShelfBtn').addEventListener('click', function () {
+    var name = $('moveNewShelfInput').value.trim();
+    if (!name) return;
+    if (state.shelves.indexOf(name) !== -1) { toast('That shelf already exists'); return; }
+    state.shelves.push(name);
+    save();
+    var selected = Array.prototype.map.call(
+      $('moveShelfChecks').querySelectorAll('input:checked'),
+      function (cb) { return cb.value; }
+    );
+    selected.push(name);
+    fillMoveShelfChecks(selected);
+    $('moveNewShelfInput').value = '';
+    renderShelves();
+  });
+  $('moveNewShelfInput').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { e.preventDefault(); $('moveNewShelfBtn').click(); }
+  });
+  $('cancelMove').addEventListener('click', function () {
+    moveBook = null;
+    $('moveModal').close();
+  });
+  $('confirmMove').addEventListener('click', function () {
+    if (!moveBook) return;
+    moveBook.list = 'collection';
+    moveBook.shelves = Array.prototype.map.call(
+      $('moveShelfChecks').querySelectorAll('input:checked'),
+      function (cb) { return cb.value; }
+    );
+    var title = moveBook.title;
+    moveBook = null;
+    $('moveModal').close();
+    save(); render();
+    toast('“' + title + '” added to your collection');
+  });
+  $('newShelfBtn').addEventListener('click', function () {
+    var name = $('newShelfInput').value.trim();
+    if (!name) return;
+    if (state.shelves.indexOf(name) !== -1) { toast('That shelf already exists'); return; }
+    state.shelves.push(name);
+    save();
+    var selected = checkedShelves();
+    selected.push(name);
+    fillShelfChecks(selected);
+    $('newShelfInput').value = '';
+    renderShelves();
+  });
+  $('newShelfInput').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { e.preventDefault(); $('newShelfBtn').click(); }
+  });
+  $('uploadCoverBtn').addEventListener('click', function () { $('coverFile').click(); });
+  $('coverFile').addEventListener('change', function (e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    fileToCover(file, function (dataUrl) {
+      $('coverUrl').value = dataUrl;
+      updateCoverPreview();
+    });
+    e.target.value = '';
+  });
+  $('resetCoverBtn').addEventListener('click', function () {
+    var isbn = cleanIsbn($('isbnInput').value);
+    $('coverUrl').value = isbn
+      ? 'https://covers.openlibrary.org/b/isbn/' + isbn + '-M.jpg?default=false'
+      : '';
+    updateCoverPreview();
+  });
+  $('cancelBook').addEventListener('click', function () { $('bookModal').close(); });
+  $('detailClose').addEventListener('click', function () {
+    saveDetailNotes();
+    $('detailModal').close();
+  });
+  $('detailModal').addEventListener('close', function () {
+    saveDetailNotes();
+    detailBook = null;
+  });
+  $('detailEdit').addEventListener('click', function () {
+    saveDetailNotes();
+    var b = detailBook;
+    $('detailModal').close();
+    if (b) openBookModal(b);
+  });
+  $('cancelRemove').addEventListener('click', function () {
+    state.pendingRemoveId = null;
+    $('confirmModal').close();
+  });
+  $('confirmRemove').addEventListener('click', function () {
+    var b = state.books.find(function (x) { return x.id === state.pendingRemoveId; });
+    state.books = state.books.filter(function (x) { return x.id !== state.pendingRemoveId; });
+    state.pendingRemoveId = null;
+    $('confirmModal').close();
+    save(); render();
+    if (b) toast('“' + b.title + '” removed');
+  });
+  $('exportBtn').addEventListener('click', exportLibrary);
+  $('importBtn').addEventListener('click', function () { $('importFile').click(); });
+  $('importFile').addEventListener('change', function (e) {
+    if (e.target.files[0]) importLibrary(e.target.files[0]);
+    e.target.value = '';
+  });
+
+  // ---------- Backup nudge ----------
+  var MONTH = 30 * 86400000, WEEK = 7 * 86400000;
+  function maybeShowBackupBanner() {
+    if (!state.books.length) return;
+    var last = meta.lastExport || meta.firstRun || 0;
+    var nudged = meta.lastNudge || 0;
+    if (Date.now() - last > MONTH && Date.now() - nudged > WEEK) {
+      $('backupBanner').hidden = false;
+    }
+  }
+  $('backupNow').addEventListener('click', exportLibrary);
+  $('backupLater').addEventListener('click', function () {
+    meta.lastNudge = Date.now();
+    saveMeta();
+    $('backupBanner').hidden = true;
+  });
+
+  // ---------- Boot ----------
+  openDb().then(function (db) {
+    idb = db;
+    return idbGet('state').then(function (data) {
+      if (data) {
+        applyState(data);
+      } else {
+        // First run on IndexedDB: pull any existing localStorage library across.
+        var legacy = readLocalStorage();
+        if (legacy) {
+          applyState(legacy);
+          return idbSet('state', persistPayload()).then(function () {
+            try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+          });
+        }
+      }
+    }).then(function () {
+      return idbGet('meta');
+    }).then(function (m) {
+      if (m) meta = m;
+      else saveMeta();
+    });
+  }).catch(function () {
+    // IndexedDB unavailable (private mode, old browser): stay on localStorage.
+    idb = null;
+    var legacy = readLocalStorage();
+    if (legacy) applyState(legacy);
+  }).then(function () {
+    render();
+    maybeShowBackupBanner();
+  });
+
+  if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
+    navigator.serviceWorker.register('sw.js').catch(function () {});
+  }
+})();
+</script>
+</body>
+</html>
